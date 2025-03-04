@@ -45,3 +45,11 @@ Please visit the [Mathematics Physics Lectures](https://dchorazkiewicz.github.io
 * [Mathematics](https://dchorazkiewicz.github.io/Mathematics_Physics_Lectures/Mathematics/Exercises/)
 * [Discret Mathematics](https://dchorazkiewicz.github.io/Mathematics_Physics_Lectures/Discrete_Mathematics/Exercises/)
 
+## How to run the project locally
+
+```sh
+python3 -m venv .venv
+source .venv/bin/activate
+pip3 install mkdocs mkdocs-material mkdocs-macros-plugin pymdown-extensions mkdocs-mermaid2-plugin
+mkdocs serve
+```
