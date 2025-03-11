@@ -48,6 +48,36 @@
 <ul class="current">
 <li class="toctree-l2 current"><a class="reference internal current" href="#">Problem 1</a>
 <ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="#1-theoretical-foundation">1. Theoretical Foundation</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#governing-equations-of-motion">Governing Equations of Motion</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#time-of-flight">Time of Flight:</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#range-formula">Range Formula:</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#2-analysis-of-the-range">2. Analysis of the Range</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#influence-of-initial-conditions">Influence of Initial Conditions</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#graphical-representation">Graphical Representation</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#3-practical-applications">3. Practical Applications</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#4-implementation">4. Implementation</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#example-adding-air-resistance">Example: Adding Air Resistance</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#5-limitations-and-further-considerations">5. Limitations and Further Considerations</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#conclusion">Conclusion</a>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../Problem_2/">Problem 2</a>
@@ -172,6 +202,92 @@
 <div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
 <div class="section" itemprop="articleBody">
 <h1 id="problem-1">Problem 1</h1>
+<p>Investigating the Range as a Function of the Angle of Projection</p>
+<h2 id="1-theoretical-foundation">1. Theoretical Foundation</h2>
+<h3 id="governing-equations-of-motion">Governing Equations of Motion</h3>
+<p>Projectile motion can be analyzed using Newton's laws of motion. Assuming no air resistance, the motion can be decomposed into horizontal and vertical components:</p>
+<h4 id="equations-of-motion">Equations of Motion:</h4>
+<ul>
+<li>Horizontal motion:
+  $$ x(t) = v_0 \cos(\theta) t $$</li>
+<li>Vertical motion:
+  $$ y(t) = v_0 \sin(\theta) t - \frac{1}{2} g t^2 $$</li>
+</ul>
+<p>where:</p>
+<ul>
+<li><span class="arithmatex">\(v_0\)</span> is the initial velocity,</li>
+<li><span class="arithmatex">\(\theta\)</span> is the launch angle,</li>
+<li><span class="arithmatex">\(g\)</span> is the acceleration due to gravity,</li>
+<li><span class="arithmatex">\(t\)</span> is the time.</li>
+</ul>
+<h3 id="time-of-flight">Time of Flight:</h3>
+<p>Setting <span class="arithmatex">\( y(t) = 0 \)</span> to find the total flight time:
+$$ t_f = \frac{2 v_0 \sin(\theta)}{g} $$</p>
+<h3 id="range-formula">Range Formula:</h3>
+<p>The horizontal range <span class="arithmatex">\( R \)</span> is given by:</p>
+<div class="arithmatex">\[ R = v_0 \cos(\theta) t_f = \frac{v_0^2 \sin(2\theta)}{g} \]</div>
+<p>This equation shows that the range is maximized at <span class="arithmatex">\( \theta = 45^\circ \)</span>, assuming other parameters remain constant.</p>
+<hr/>
+<h2 id="2-analysis-of-the-range">2. Analysis of the Range</h2>
+<h3 id="influence-of-initial-conditions">Influence of Initial Conditions</h3>
+<ul>
+<li><strong>Initial velocity (<span class="arithmatex">\( v_0 \)</span>)</strong>: Increasing <span class="arithmatex">\( v_0 \)</span> increases the range quadratically.</li>
+<li><strong>Gravitational acceleration (<span class="arithmatex">\( g \)</span>)</strong>: Higher <span class="arithmatex">\( g \)</span> reduces the range, as the projectile falls more quickly.</li>
+<li><strong>Launch angle (<span class="arithmatex">\( \theta \)</span>)</strong>: The range follows a symmetric pattern, peaking at <span class="arithmatex">\( 45^\circ \)</span>.</li>
+</ul>
+<h3 id="graphical-representation">Graphical Representation</h3>
+<p>Below is a Python script to visualize how the range changes with <span class="arithmatex">\( \theta \)</span>:</p>
+<pre><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+
+def range_function(theta, v0, g=9.81):
+    return (v0**2 * np.sin(2 * np.radians(theta))) / g
+
+# Parameters
+v0 = 20  # initial velocity in m/s
+theta = np.linspace(0, 90, 100)  # range of angles
+g = 9.81  # gravity
+
+# Compute ranges
+ranges = range_function(theta, v0, g)
+
+# Plot results
+plt.figure(figsize=(8,5))
+plt.plot(theta, ranges, label=f'v0 = {v0} m/s')
+plt.xlabel('Launch Angle (degrees)')
+plt.ylabel('Range (m)')
+plt.title('Projectile Range vs. Launch Angle')
+plt.legend()
+plt.grid()
+plt.show()
+</code></pre>
+<p><img alt="Range vs. Launch Angle" src="../assets/problem1.png"/></p>
+<hr/>
+<h2 id="3-practical-applications">3. Practical Applications</h2>
+<ul>
+<li><strong>Sports</strong>: Understanding projectile motion helps in optimizing the throwing angles in sports like basketball, soccer, and javelin.</li>
+<li><strong>Engineering</strong>: Used in ballistics, military applications, and designing trajectories for rockets and missiles.</li>
+<li><strong>Astrophysics</strong>: Used to model celestial body trajectories and space exploration missions.</li>
+</ul>
+<hr/>
+<h2 id="4-implementation">4. Implementation</h2>
+<p>A numerical simulation can further analyze cases involving air resistance. Incorporating drag force leads to differential equations that require numerical methods (e.g., Runge-Kutta) to solve.</p>
+<h3 id="example-adding-air-resistance">Example: Adding Air Resistance</h3>
+<p>The equations with drag <span class="arithmatex">\(F_d = -k v^2\)</span> lead to:</p>
+<div class="arithmatex">\[m \frac{d^2 x}{dt^2} = -k v_x^2$$
+$$m \frac{d^2 y}{dt^2} = -mg - k v_y^2\]</div>
+<p>A numerical solver like Python's SciPy can be used to compute solutions.</p>
+<hr/>
+<h2 id="5-limitations-and-further-considerations">5. Limitations and Further Considerations</h2>
+<ul>
+<li><strong>Air resistance</strong>: Causes asymmetry and reduces range.</li>
+<li><strong>Uneven terrain</strong>: Requires solving for complex boundary conditions.</li>
+<li><strong>Wind effects</strong>: Affects trajectory unpredictably.</li>
+</ul>
+<p>Future work could involve incorporating machine learning techniques to predict projectile trajectories in complex environments.</p>
+<hr/>
+<h2 id="conclusion">Conclusion</h2>
+<p>Projectile motion demonstrates rich mathematical and physical insights. While the idealized model provides a good approximation, real-world adaptations require numerical solutions to account for non-ideal conditions.</p>
 </div>
 </div><footer>
 <div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
