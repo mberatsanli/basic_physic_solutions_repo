@@ -1,139 +1,97 @@
 # Problem 1
 
-Here's the solution in **raw Markdown** format for your assignment:
+Interference Patterns on a Water Surface
 
----
+## 1. Theoretical Background
 
-## Problem 1: Interference Patterns on a Water Surface
+### Wave Interference
+Interference occurs when two or more waves overlap, leading to constructive (amplification) and destructive (cancellation) effects. On a water surface, waves emanating from multiple sources interact to form intricate interference patterns.
 
-### Motivation:
+The displacement \( \eta(x, y, t) \) of a circular wave originating from a point source \( (x_0, y_0) \) is given by:
 
-Interference occurs when waves from different sources overlap, creating new patterns. On a water surface, this can be easily observed when ripples from different points meet, forming distinctive interference patterns. These patterns can show us how waves combine in different ways, either reinforcing each other or canceling out.
-
-Studying these patterns helps us understand wave behavior in a simple, visual way. It also allows us to explore important concepts, like the relationship between wave phase and the effects of multiple sources. This task offers a hands-on approach to learning about wave interactions and their real-world applications, making it an interesting and engaging way to dive into wave physics.
-
----
-
-### Task:
-
-A circular wave on the water surface, emanating from a point source located at $(x_0, y_0)$, can be described by the Single Disturbance equation:
-
-$$
+\[
 \eta(x, y, t) = \frac{A}{\sqrt{r}} \cdot \cos\left(kr - \omega t + \phi\right)
-$$
+\]
 
 where:
+- \( A \) is the wave amplitude,
+- \( k = \frac{2\pi}{\lambda} \) is the wave number,
+- \( \omega = 2\pi f \) is the angular frequency,
+- \( r = \sqrt{(x - x_0)^2 + (y - y_0)^2} \) is the radial distance from the source,
+- \( \phi \) is the initial phase.
 
-- $\eta(x, y, t)$ is the displacement of the water surface at point $(x, y)$ and time $t$,
-- $A$ is the amplitude of the wave,
-- $k = \frac{2\pi}{\lambda}$ is the wave number, related to the wavelength $\lambda$,
-- $\omega = 2\pi f$ is the angular frequency, related to the frequency $f$,
-- $r = \sqrt{(x - x_0)^2 + (y - y_0)^2}$ is the distance from the source to the point $(x, y)$,
-- $\phi$ is the initial phase.
+When multiple sources are present, the net displacement is given by:
+
+\[
+\eta_{\text{sum}}(x, y, t) = \sum_{i=1}^{N} \eta_i(x, y, t)
+\]
+
+where \( N \) is the number of sources.
 
 ---
 
-### Solution Steps:
+## 2. Problem Setup
 
-#### 1. **Select a Regular Polygon:**
-We will choose an **equilateral triangle** as our regular polygon. The three vertices of the triangle will act as the points where the wave sources are located.
+### 1. Choosing a Regular Polygon
+We select a regular polygon (e.g., equilateral triangle, square, pentagon) and place wave sources at its vertices.
 
-#### 2. **Position the Sources:**
-The wave sources are placed at the vertices of the regular triangle. The coordinates of the three vertices will be as follows:
+### 2. Computing the Superposition
+Each vertex of the polygon acts as a wave source, and their combined effect determines the final interference pattern.
 
-- Vertex 1: $(x_1, y_1) = (1, 1)$
-- Vertex 2: $(x_2, y_2) = (-0.5, -1)$
-- Vertex 3: $(x_3, y_3) = (-0.5, -1)$
+---
 
-#### 3. **Write the Wave Equations:**
-For each source, the wave function will be described as:
-
-$$
-\eta_1(x, y, t) = \frac{A}{\sqrt{r_1}} \cdot \cos(k r_1 - \omega t + \phi)
-$$
-
-$$
-\eta_2(x, y, t) = \frac{A}{\sqrt{r_2}} \cdot \cos(k r_2 - \omega t + \phi)
-$$
-
-$$
-\eta_3(x, y, t) = \frac{A}{\sqrt{r_3}} \cdot \cos(k r_3 - \omega t + \phi)
-$$
-
-Where $r_1$, $r_2$, and $r_3$ are the distances from each source to the observation point $(x, y)$.
-
-#### 4. **Superposition of Waves:**
-To find the total wave displacement, we sum the displacements from each source:
-
-$$
-\eta_{\text{sum}}(x, y, t) = \eta_1(x, y, t) + \eta_2(x, y, t) + \eta_3(x, y, t)
-$$
-
-#### 5. **Analyze the Interference Patterns:**
-We will analyze the interference pattern formed by the superposition of these waves. Constructive interference will occur where the waves amplify each other, and destructive interference will occur where the waves cancel each other out.
-
-#### 6. **Visualization:**
-We will use Python to plot the interference patterns on a water surface. The following code implements the calculations and visualization:
+## 3. Computational Model
+The following Python script simulates and visualizes the interference pattern.
 
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Parameters
+# Define wave parameters
 A = 1  # Amplitude
-lambda_ = 1  # Wavelength
-f = 1  # Frequency
+lambda_ = 10  # Wavelength
 k = 2 * np.pi / lambda_  # Wave number
-omega = 2 * np.pi * f  # Angular frequency
-phi = 0  # Initial phase
+omega = 2 * np.pi  # Angular frequency (arbitrary unit)
+t = 0  # Time snapshot
 
-# Source coordinates (regular triangle)
-x0 = np.array([1, -0.5, -0.5])
-y0 = np.array([1, -1, -1])
+# Define polygon vertices (square as an example)
+N = 4  # Number of sources (square)
+radius = 20  # Distance from center
+angles = np.linspace(0, 2 * np.pi, N, endpoint=False)
+sources = [(radius * np.cos(a), radius * np.sin(a)) for a in angles]
 
-# Distance function
-def distance(x, y, x0, y0):
-    return np.sqrt((x - x0)**2 + (y - y0)**2)
+# Define grid for visualization
+x = np.linspace(-30, 30, 300)
+y = np.linspace(-30, 30, 300)
+X, Y = np.meshgrid(x, y)
 
-# Wave equation
-def wave(x, y, t, x0, y0):
-    r = distance(x, y, x0, y0)
-    return A / np.sqrt(r) * np.cos(k * r - omega * t + phi)
-
-# Time and spatial grid
-t = 0  # Initial time
-x_range = np.linspace(-2, 2, 400)
-y_range = np.linspace(-2, 2, 400)
-X, Y = np.meshgrid(x_range, y_range)
-
-# Total wave displacement
+# Compute wave interference pattern
 eta_sum = np.zeros_like(X)
+for x0, y0 in sources:
+    R = np.sqrt((X - x0)**2 + (Y - y0)**2)
+    eta_sum += A / np.sqrt(R + 1e-6) * np.cos(k * R - omega * t)  # Avoid division by zero
 
-# Add the contributions from all sources
-for i in range(3):
-    eta_sum += wave(X, Y, t, x0[i], y0[i])
-
-# Plotting the interference pattern
+# Plot the interference pattern
 plt.figure(figsize=(8, 6))
-plt.contourf(X, Y, eta_sum, 20, cmap='RdBu')
-plt.colorbar(label='Displacement')
-plt.title("Interference Pattern (Constructive and Destructive Interference)")
-plt.xlabel("x")
-plt.ylabel("y")
+plt.imshow(eta_sum, extent=[-30, 30, -30, 30], cmap='coolwarm', origin='lower')
+plt.colorbar(label='Wave Amplitude')
+plt.scatter(*zip(*sources), color='black', label='Wave Sources')
+plt.legend()
+plt.title('Interference Pattern for a Square Wave Source')
+plt.xlabel('X Position')
+plt.ylabel('Y Position')
 plt.show()
 ```
 
-![Interference Pattern for a Square Wave Source](assets/problem1.png)
+---
 
-### Result:
+## 4. Observations and Analysis
 
-The result is a graphical representation of the interference pattern formed by the superposition of waves emitted from the three sources at the vertices of the equilateral triangle. The pattern shows areas of constructive interference (where the waves amplify each other) and destructive interference (where the waves cancel each other out).
-
-The contour plot displays these regions clearly, with brighter areas indicating constructive interference (amplification) and darker areas indicating destructive interference (cancellation). This type of visualization helps in understanding the wave interaction and superposition principle in a simple and intuitive way.
+1. **Constructive Interference**: Bright regions indicate where wave crests reinforce each other.
+2. **Destructive Interference**: Dark regions indicate cancellation due to phase differences.
+3. **Polygonal Symmetry**: The interference pattern reflects the symmetry of the chosen polygon.
 
 ---
 
-### Conclusion:
-
-In this task, we analyzed the interference patterns formed by waves originating from sources placed at the vertices of a regular polygon (an equilateral triangle in this case). By summing the contributions from each wave source and visualizing the resulting wave field, we were able to identify the regions of constructive and destructive interference. This exercise provides a hands-on way to study wave superposition and interference in a simple setup, helping us to grasp important concepts in wave physics.
-
+## 5. Conclusion
+This simulation demonstrates how waves from multiple sources interact to form interference patterns. By varying the polygon shape and wave parameters, we can analyze different wave behaviors useful in acoustics, optics, and fluid dynamics.
