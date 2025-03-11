@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "solutions-repo"
 version = "0.1.0"
-description = ""
-authors = ["dchorazkiewicz <damian.ch.datascience@gmail.com>"]
+description = "Solutions to problems from the Basic Physics lectures"
+authors = ["mberatsanli <mberatsanli@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
