@@ -123,6 +123,8 @@ plt.ylabel("y")
 plt.show()
 ```
 
+![Interference Pattern for a Square Wave Source](assets/problem1.png)
+
 ### Result:
 
 The result is a graphical representation of the interference pattern formed by the superposition of waves emitted from the three sources at the vertices of the equilateral triangle. The pattern shows areas of constructive interference (where the waves amplify each other) and destructive interference (where the waves cancel each other out).
