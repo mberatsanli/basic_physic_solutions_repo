@@ -83,6 +83,8 @@ plt.ylabel('Y Position')
 plt.show()
 ```
 
+![Interference Pattern for a Square Wave Source](assets/problem1.png)
+
 ---
 
 ## 4. Observations and Analysis
