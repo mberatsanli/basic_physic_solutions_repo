@@ -63,25 +63,53 @@ The following Python script simulates circular orbits and verifies Kepler’s Th
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.constants import G
 
-def kepler_period(radius, mass):
-    """Calculate orbital period using Kepler's Third Law."""
+# Constants
+G = 6.67430e-11  # Gravitational constant (m^3 kg^-1 s^-2)
+M_sun = 1.989e30  # Mass of the Sun (kg)
+
+# Function to calculate orbital period
+def orbital_period(radius, mass=M_sun):
     return 2 * np.pi * np.sqrt(radius**3 / (G * mass))
 
-# Define parameters
-mass_sun = 1.989e30  # kg (mass of the Sun)
-orbit_radii = np.linspace(0.1, 10, 100) * 1.496e11  # meters (0.1 to 10 AU)
-orbit_periods = kepler_period(orbit_radii, mass_sun) / (60 * 60 * 24 * 365)  # Convert to years
+# Generate data
+radii = np.logspace(9, 12, 100)  # Orbital radii from 10^9 to 10^12 meters
+periods = orbital_period(radii)
+
+# Verify Kepler's Third Law
+T_squared = periods**2
+R_cubed = radii**3
 
 # Plot T^2 vs R^3
-plt.figure(figsize=(8,5))
-plt.plot(orbit_radii**3, orbit_periods**2, label="Kepler's Law")
-plt.xlabel('Orbital Radius Cubed (m^3)')
-plt.ylabel('Orbital Period Squared (years^2)')
-plt.title('Verification of Kepler’s Third Law')
+plt.figure(figsize=(8,6))
+plt.plot(R_cubed, T_squared, label="$T^2 \propto R^3$", color='b')
+plt.xlabel("Orbital Radius Cubed (m^3)")
+plt.ylabel("Orbital Period Squared (s^2)")
+plt.title("Verification of Kepler's Third Law")
 plt.legend()
 plt.grid()
+plt.show()
+
+# Simulating circular orbit
+def circular_orbit(radius, num_points=100):
+    theta = np.linspace(0, 2*np.pi, num_points)
+    x = radius * np.cos(theta)
+    y = radius * np.sin(theta)
+    return x, y
+
+# Plot circular orbits for different radii
+plt.figure(figsize=(8,8))
+for r in [1e10, 3e10, 5e10]:
+    x, y = circular_orbit(r)
+    plt.plot(x, y, label=f"Radius = {r:.0e} m")
+
+plt.scatter(0, 0, color='orange', label='Central Mass (e.g., Sun)')
+plt.xlabel("x position (m)")
+plt.ylabel("y position (m)")
+plt.title("Simulated Circular Orbits")
+plt.legend()
+plt.grid()
+plt.axis("equal")
 plt.show()
 ```
 
