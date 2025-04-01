@@ -7,6 +7,8 @@ theme:
   code:
     highlighting: true
     language: python
+  palette:
+    primary: teal
 markdown_extensions:
   - toc
   - tables
