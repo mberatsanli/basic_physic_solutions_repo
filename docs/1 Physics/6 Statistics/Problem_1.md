@@ -187,22 +187,21 @@ plt.show()
 ```
 
 ![Standard Error vs Sample Size](assets/prob1_a5.png)
-
 ## 5. Practical Applications
 
 The CLT has numerous real-world applications:
 
-1. **Quality Control**:
-   - Monitoring manufacturing processes
-   - Establishing confidence intervals for measurements
+### Quality Control
+- Monitoring manufacturing processes
+- Establishing confidence intervals for measurements
 
-2. **Financial Analysis**:
-   - Portfolio risk assessment
-   - Market return predictions
+### Financial Analysis  
+- Portfolio risk assessment
+- Market return predictions
 
-3. **Scientific Research**:
-   - Experimental design
-   - Statistical inference
+### Scientific Research
+- Experimental design
+- Statistical inference
 
 ## 6. Conclusions
 
