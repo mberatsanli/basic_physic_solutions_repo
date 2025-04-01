@@ -72,26 +72,6 @@
 <ul class="current">
 <li class="toctree-l2 current"><a class="reference internal current" href="#">Problem 1</a>
 <ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="#1-theoretical-background">1. Theoretical Background</a>
-<ul>
-<li class="toctree-l4"><a class="reference internal" href="#the-lorentz-force">The Lorentz Force</a>
-</li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#2-problem-setup">2. Problem Setup</a>
-<ul>
-<li class="toctree-l4"><a class="reference internal" href="#1-choosing-field-configurations">1. Choosing Field Configurations</a>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="#2-computing-the-motion">2. Computing the Motion</a>
-</li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#3-computational-model">3. Computational Model</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#4-observations-and-analysis">4. Observations and Analysis</a>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#5-conclusion">5. Conclusion</a>
-</li>
 </ul>
 </li>
 </ul>
@@ -191,90 +171,206 @@
 </div>
 <div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
 <div class="section" itemprop="articleBody">
-<h1 id="problem-1">Problem 1</h1>
-<p>Charged Particle Motion in Electric and Magnetic Fields</p>
-<h2 id="1-theoretical-background">1. Theoretical Background</h2>
-<h3 id="the-lorentz-force">The Lorentz Force</h3>
-<p>The motion of a charged particle in electric and magnetic fields is governed by the Lorentz force equation:</p>
-<div class="arithmatex">\[
-\mathbf{F} = q(\mathbf{E} + \mathbf{v} \times \mathbf{B})
-\]</div>
-<p>where:
-- <span class="arithmatex">\( q \)</span> is the charge of the particle,
-- <span class="arithmatex">\( \mathbf{E} \)</span> is the electric field,
-- <span class="arithmatex">\( \mathbf{B} \)</span> is the magnetic field,
-- <span class="arithmatex">\( \mathbf{v} \)</span> is the velocity of the particle.</p>
-<p>The trajectory of a charged particle depends on the initial conditions and the configuration of the fields. In a uniform magnetic field, the motion is typically circular or helical due to the perpendicular force exerted by <span class="arithmatex">\( \mathbf{B} \)</span> on <span class="arithmatex">\( \mathbf{v} \)</span>.</p>
-<hr/>
-<h2 id="2-problem-setup">2. Problem Setup</h2>
-<h3 id="1-choosing-field-configurations">1. Choosing Field Configurations</h3>
-<p>We consider three cases:
-1. A uniform magnetic field <span class="arithmatex">\( \mathbf{B} \)</span> alone.
-2. Combined uniform electric and magnetic fields.
-3. Crossed electric and magnetic fields.</p>
-<h3 id="2-computing-the-motion">2. Computing the Motion</h3>
-<p>Using numerical integration, we compute the particle's trajectory under the influence of the Lorentz force.</p>
-<hr/>
-<h2 id="3-computational-model">3. Computational Model</h2>
-<p>The following Python script simulates and visualizes the motion of a charged particle in an electromagnetic field.</p>
-<pre><code class="language-python">import numpy as np
+<p>import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.animation import FuncAnimation
+import matplotlib.gridspec as gridspec</p>
+<p>def simulate_uniform_B(q, m, B, v0, r0, dt, steps):
+    """Enhanced simulation with energy and momentum tracking"""
+    r = np.zeros((steps, 3))
+    v = np.zeros((steps, 3))
+    E_kinetic = np.zeros(steps)
+    angular_momentum = np.zeros((steps, 3))
+    magnetic_moment = np.zeros(steps)</p>
+<pre><code>r[0] = r0
+v[0] = v0
 
-# Constants (modifiable for parameter exploration)
-q = 1.6e-19  # Charge of the particle (C)
-m = 9.11e-31  # Mass of the particle (kg)
-B = np.array([0, 0, 1])  # Uniform magnetic field (T)
-E = np.array([0, 0, 0])  # Electric field (V/m)
-v0 = np.array([1e6, 0, 0])  # Initial velocity (m/s)
-r0 = np.array([0, 0, 0])  # Initial position (m)
-dt = 1e-10  # Time step (s)
-n_steps = 1000  # Number of time steps
+# Initial values
+E_kinetic[0] = 0.5 * m * np.sum(v[0]**2)
+angular_momentum[0] = m * np.cross(r[0], v[0])
 
-def lorentz_force(q, v, E, B):
-    """Computes the Lorentz force."""
-    return q * (E + np.cross(v, B))
+B_mag = np.linalg.norm(B)
+v_perp = v[0] - np.dot(v[0], B) * B / B_mag**2
+magnetic_moment[0] = 0.5 * m * np.sum(v_perp**2) / B_mag
 
-def simulate_motion(q, m, E, B, v0, r0, dt, n_steps):
-    """Simulates the motion of a charged particle in E and B fields."""
-    r = np.zeros((n_steps, 3))
-    v = np.zeros((n_steps, 3))
-    r[0] = r0
-    v[0] = v0
+for i in range(1, steps):
+    F = q * np.cross(v[i-1], B)
+    a = F / m
+    v[i] = v[i-1] + a * dt
+    r[i] = r[i-1] + v[i] * dt
 
-    for i in range(1, n_steps):
-        F = lorentz_force(q, v[i-1], E, B)
-        a = F / m
-        v[i] = v[i-1] + a * dt
-        r[i] = r[i-1] + v[i] * dt
+    # Calculate conserved quantities
+    E_kinetic[i] = 0.5 * m * np.sum(v[i]**2)
+    angular_momentum[i] = m * np.cross(r[i], v[i])
+    v_perp = v[i] - np.dot(v[i], B) * B / B_mag**2
+    magnetic_moment[i] = 0.5 * m * np.sum(v_perp**2) / B_mag
 
-    return r, v
-
-# Run simulation
-r, v = simulate_motion(q, m, E, B, v0, r0, dt, n_steps)
-
-# Visualization
-fig = plt.figure(figsize=(8, 6))
-ax = fig.add_subplot(111, projection='3d')
-ax.plot(r[:, 0], r[:, 1], r[:, 2], label='Particle Trajectory')
-ax.set_xlabel('X (m)')
-ax.set_ylabel('Y (m)')
-ax.set_zlabel('Z (m)')
-ax.set_title('Charged Particle Motion in a Magnetic Field')
-ax.legend()
-plt.show()
+return r, v, E_kinetic, angular_momentum, magnetic_moment
 </code></pre>
-<p><img alt="Charged Particle Motion" src="../assets/problem1.png"/></p>
-<hr/>
-<h2 id="4-observations-and-analysis">4. Observations and Analysis</h2>
+<p>def simulate_EB_fields(q, m, E, B, v0, r0, dt, steps):
+    """Enhanced E×B drift simulation with additional physics parameters"""
+    r = np.zeros((steps, 3))
+    v = np.zeros((steps, 3))
+    drift_velocity = np.zeros((steps, 3))
+    gyroradius = np.zeros(steps)
+    total_energy = np.zeros(steps)</p>
+<pre><code>r[0] = r0
+v[0] = v0
+
+B_mag = np.linalg.norm(B)
+drift_velocity_theoretical = np.cross(E, B) / (B_mag**2)
+
+for i in range(1, steps):
+    F = q * (E + np.cross(v[i-1], B))
+    a = F / m
+    v[i] = v[i-1] + a * dt
+    r[i] = r[i-1] + v[i] * dt
+
+    # Calculate drift velocity and gyroradius
+    v_perp = v[i] - np.dot(v[i], B) * B / (B_mag**2)
+    drift_velocity[i] = np.cross(E, B) / (B_mag**2)
+    gyroradius[i] = m * np.linalg.norm(v_perp) / (abs(q) * B_mag)
+
+    # Calculate total energy (kinetic + potential)
+    total_energy[i] = 0.5 * m * np.sum(v[i]**2) + q * np.dot(E, r[i])
+
+return r, v, drift_velocity, gyroradius, total_energy
+</code></pre>
+<h1 id="parameters">Parameters</h1>
+<p>q = 1.6e-19  # electron charge
+m = 9.1e-31  # electron mass
+B = np.array([0, 0, 0.1])  # magnetic field in T
+E = np.array([1000, 0, 0])  # electric field in V/m
+v0 = np.array([1e6, 1e6, 0])  # initial velocity
+r0 = np.array([0, 0, 0])  # initial position
+dt = 1e-11
+steps = 1000</p>
+<h1 id="run-simulations">Run simulations</h1>
+<p>r_B, v_B, E_kin, L, mu = simulate_uniform_B(q, m, B, v0, r0, dt, steps)
+r_EB, v_EB, v_drift, rg, E_total = simulate_EB_fields(q, m, E, B, v0, r0, dt, steps)</p>
+<h1 id="create-comprehensive-visualization-with-8-subplots">Create comprehensive visualization with 8 subplots</h1>
+<p>plt.style.use('seaborn-darkgrid')
+fig = plt.figure(figsize=(20, 15))
+gs = gridspec.GridSpec(4, 2)</p>
+<h1 id="1-3d-trajectory-in-b-field">1. 3D trajectory in B field</h1>
+<p>ax1 = fig.add_subplot(gs[0, 0], projection='3d')
+ax1.plot(r_B[:, 0], r_B[:, 1], r_B[:, 2], 'b-', label='Trajectory')
+ax1.set_title('3D Particle Trajectory (B field)')
+ax1.set_xlabel('X (m)')
+ax1.set_ylabel('Y (m)')
+ax1.set_zlabel('Z (m)')
+ax1.legend()</p>
+<h1 id="2-energy-conservation-in-b-field">2. Energy conservation in B field</h1>
+<p>ax2 = fig.add_subplot(gs[0, 1])
+t = np.arange(steps) * dt
+ax2.plot(t, E_kin / E_kin[0], 'g-', label='Normalized Kinetic Energy')
+ax2.set_title('Energy Conservation (B field)')
+ax2.set_xlabel('Time (s)')
+ax2.set_ylabel('E/E₀')
+ax2.legend()</p>
+<h1 id="3-eb-drift-trajectory">3. E×B drift trajectory</h1>
+<p>ax3 = fig.add_subplot(gs[1, 0], projection='3d')
+ax3.plot(r_EB[:, 0], r_EB[:, 1], r_EB[:, 2], 'r-', label='E×B Drift')
+ax3.set_title('3D Particle Trajectory (E×B fields)')
+ax3.set_xlabel('X (m)')
+ax3.set_ylabel('Y (m)')
+ax3.set_zlabel('Z (m)')
+ax3.legend()</p>
+<h1 id="4-total-energy-in-eb-fields">4. Total energy in E×B fields</h1>
+<p>ax4 = fig.add_subplot(gs[1, 1])
+ax4.plot(t, E_total / E_total[0], 'm-', label='Normalized Total Energy')
+ax4.set_title('Total Energy Conservation (E×B fields)')
+ax4.set_xlabel('Time (s)')
+ax4.set_ylabel('E_total/E₀')
+ax4.legend()</p>
+<h1 id="5-magnetic-moment-conservation">5. Magnetic moment conservation</h1>
+<p>ax5 = fig.add_subplot(gs[2, 0])
+ax5.plot(t, mu / mu[0], 'c-', label='Normalized Magnetic Moment')
+ax5.set_title('Magnetic Moment Conservation')
+ax5.set_xlabel('Time (s)')
+ax5.set_ylabel('μ/μ₀')
+ax5.legend()</p>
+<h1 id="6-angular-momentum-components">6. Angular momentum components</h1>
+<p>ax6 = fig.add_subplot(gs[2, 1])
+ax6.plot(t, L[:, 0], 'b-', label='Lx')
+ax6.plot(t, L[:, 1], 'r-', label='Ly')
+ax6.plot(t, L[:, 2], 'g-', label='Lz')
+ax6.set_title('Angular Momentum Components')
+ax6.set_xlabel('Time (s)')
+ax6.set_ylabel('Angular Momentum (kg⋅m²/s)')
+ax6.legend()</p>
+<h1 id="7-phase-space-plot-x-vx">7. Phase space plot (x-vx)</h1>
+<p>ax7 = fig.add_subplot(gs[3, 0])
+ax7.plot(r_B[:, 0], v_B[:, 0], 'k.', markersize=1, label='Phase Space')
+ax7.set_title('Phase Space (x-vx)')
+ax7.set_xlabel('Position x (m)')
+ax7.set_ylabel('Velocity vx (m/s)')
+ax7.legend()</p>
+<h1 id="8-gyroradius-evolution">8. Gyroradius evolution</h1>
+<p>ax8 = fig.add_subplot(gs[3, 1])
+ax8.plot(t, rg * 1e6, 'y-', label='Gyroradius')
+ax8.set_title('Gyroradius Evolution')
+ax8.set_xlabel('Time (s)')
+ax8.set_ylabel('Radius (μm)')
+ax8.legend()</p>
+<p>plt.tight_layout()
+plt.show()</p>
+<h1 id="additional-theoretical-analysis-and-formulas">Additional theoretical analysis and formulas:</h1>
+<p>"""
+Key Physics Formulas and Concepts:</p>
 <ol>
-<li><strong>Circular Motion</strong>: In a uniform magnetic field, the particle follows a circular or helical path depending on the initial velocity.</li>
-<li><strong>Effect of Electric Field</strong>: Introducing an electric field results in drift motion.</li>
-<li><strong>Larmor Radius</strong>: The radius of the circular trajectory is determined by the balance of magnetic force and centripetal acceleration.</li>
+<li>
+<p>Cyclotron Frequency:
+   ω_c = qB/m</p>
+</li>
+<li>
+<p>Larmor Radius:
+   r_L = mv_⊥/(qB)</p>
+</li>
+<li>
+<p>E×B Drift Velocity:
+   v_d = (E×B)/B²</p>
+</li>
+<li>
+<p>Magnetic Moment (First Adiabatic Invariant):
+   μ = mv_⊥²/(2B)</p>
+</li>
+<li>
+<p>Drift Velocities:</p>
+</li>
+<li>Gradient B drift: v_∇B = (mv_⊥²/2qB³)(B×∇B)</li>
+<li>Curvature drift: v_c = (mv_∥²/qB³)R_c×B</li>
+<li>
+<p>Polarization drift: v_p = (m/qB²)dE_⊥/dt</p>
+</li>
+<li>
+<p>Energy Conservation:
+   d/dt(½mv²) = qE·v</p>
+</li>
+<li>
+<p>Canonical Momentum:
+   P = mv + qA (A is vector potential)</p>
+</li>
+<li>
+<p>Magnetic Mirror Force:
+   F_∥ = -μ∇_∥B</p>
+</li>
+<li>
+<p>Mirror Ratio and Loss Cone:
+   R = B_max/B_min
+   sin²(θ) &gt; 1/R (trapping condition)</p>
+</li>
+<li>
+<p>Relativistic Effects:</p>
+<ul>
+<li>Relativistic mass: m = γm₀</li>
+<li>Lorentz factor: γ = 1/√(1-v²/c²)</li>
+<li>Relativistic cyclotron frequency: ω_c = qB/(γm₀)
+""" </li>
+</ul>
+</li>
 </ol>
-<hr/>
-<h2 id="5-conclusion">5. Conclusion</h2>
-<p>This simulation provides insights into charged particle dynamics in electromagnetic fields, relevant to applications such as cyclotrons, plasma confinement, and astrophysics. Extending this model to non-uniform fields or relativistic velocities can offer deeper insights into complex systems.</p>
 </div>
 </div><footer>
 <div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
