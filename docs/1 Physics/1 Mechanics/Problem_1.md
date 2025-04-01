@@ -8,18 +8,22 @@ Investigating the Range as a Function of the Angle of Projection
 Projectile motion can be analyzed using Newton's laws of motion. For a more complete analysis, let's start with the fundamental differential equations:
 
 $$ \frac{d^2x}{dt^2} = 0 $$
+
 $$ \frac{d^2y}{dt^2} = -g $$
 
 Integrating these equations with initial conditions:
 $$ v_{0x} = v_0\cos(\theta) $$
+
 $$ v_{0y} = v_0\sin(\theta) $$
 
 We get the velocity components:
 $$ v_x(t) = v_0\cos(\theta) $$
+
 $$ v_y(t) = v_0\sin(\theta) - gt $$
 
 And the position components:
 $$ x(t) = v_0\cos(\theta)t $$
+
 $$ y(t) = v_0\sin(\theta)t - \frac{1}{2}gt^2 $$
 
 ### Enhanced Analysis of Flight Characteristics
