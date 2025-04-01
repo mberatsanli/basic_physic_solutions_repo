@@ -377,21 +377,20 @@ compare_methods()
 ```
 
 ![Comparison of Methods](assets/prob2_a7.png)
-
 ## 4. Conclusions
 
-1. **Convergence Rate**:
-   - The circle method generally shows more stable convergence
-   - Buffon's needle method has higher variance in its estimates
+1. **Convergence Rate**
+    - The circle method generally shows more stable convergence
+    - Buffon's needle method has higher variance in its estimates
 
-2. **Computational Efficiency**:
-   - Circle method is simpler to implement and computationally lighter
-   - Buffon's needle requires more complex geometric calculations
+2. **Computational Efficiency**
+    - Circle method is simpler to implement and computationally lighter
+    - Buffon's needle requires more complex geometric calculations
 
-3. **Practical Considerations**:
-   - Both methods demonstrate the power of Monte Carlo techniques
-   - The circle method is more suitable for educational purposes
-   - Buffon's needle provides an interesting historical and geometric perspective
+3. **Practical Considerations**
+    - Both methods demonstrate the power of Monte Carlo techniques
+    - The circle method is more suitable for educational purposes
+    - Buffon's needle provides an interesting historical and geometric perspective
 
 ## 5. Applications
 
