@@ -73,6 +73,7 @@ Below is a Python script to simulate and visualize the forced damped pendulum.
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
+from mpl_toolkits.mplot3d import Axes3D
 
 def forced_damped_pendulum(t, y, b, g, L, A, omega):
     theta, omega_dot = y
@@ -80,33 +81,121 @@ def forced_damped_pendulum(t, y, b, g, L, A, omega):
     domega_dt = -b * omega_dot - (g/L) * np.sin(theta) + A * np.cos(omega * t)
     return [dtheta_dt, domega_dt]
 
-# Parameters
-b = 0.2  # damping coefficient
+# Enhanced parameter set
+b_values = [0.1, 0.5, 1.0]  # different damping coefficients
 g = 9.81  # gravity (m/s^2)
-L = 1.0  # pendulum length (m)
-A = 1.2  # driving force amplitude
+L = 1.0   # pendulum length (m)
+A = 1.2   # driving force amplitude
 omega = 2.0  # driving frequency
 y0 = [0.1, 0]  # initial conditions: [theta(0), omega(0)]
-t_span = (0, 50)  # simulation time
-t_eval = np.linspace(0, 50, 1000)  # time steps
+t_span = (0, 50)
+t_eval = np.linspace(0, 50, 1000)
 
-# Solve ODE
-sol = solve_ivp(forced_damped_pendulum, t_span, y0, t_eval=t_eval, args=(b, g, L, A, omega))
+# Create subplots for different analyses
+plt.figure(figsize=(15, 10))
 
-# Plot results
-plt.figure(figsize=(8,5))
-plt.plot(sol.t, sol.y[0], label='Theta (rad)')
+# Plot 1: Compare different damping coefficients
+plt.subplot(2, 2, 1)
+for b in b_values:
+    sol = solve_ivp(forced_damped_pendulum, t_span, y0, t_eval=t_eval, 
+                    args=(b, g, L, A, omega))
+    plt.plot(sol.t, sol.y[0], label=f'b = {b}')
 plt.xlabel('Time (s)')
 plt.ylabel('Angle (rad)')
-plt.title('Forced Damped Pendulum Motion')
+plt.title('Effect of Damping Coefficient')
 plt.legend()
-plt.grid()
+plt.grid(True)
+
+# Plot 2: Phase Space Portrait
+plt.subplot(2, 2, 2)
+b = 0.2  # Use moderate damping for phase space
+sol = solve_ivp(forced_damped_pendulum, t_span, y0, t_eval=t_eval, 
+                args=(b, g, L, A, omega))
+plt.plot(sol.y[0], sol.y[1])
+plt.xlabel('θ (rad)')
+plt.ylabel('dθ/dt (rad/s)')
+plt.title('Phase Space Portrait')
+plt.grid(True)
+
+# Plot 3: Resonance Analysis
+frequencies = np.linspace(0.5, 4, 50)
+amplitudes = []
+b = 0.2
+for w in frequencies:
+    sol = solve_ivp(forced_damped_pendulum, (0, 100), y0, t_eval=np.linspace(80, 100, 200), 
+                    args=(b, g, L, A, w))
+    amplitudes.append(np.max(np.abs(sol.y[0])))
+
+plt.subplot(2, 2, 3)
+plt.plot(frequencies, amplitudes)
+plt.xlabel('Driving Frequency ω (rad/s)')
+plt.ylabel('Maximum Amplitude (rad)')
+plt.title('Resonance Curve')
+plt.grid(True)
+
+# Plot 4: Energy Analysis
+def system_energy(theta, omega, L, g):
+    kinetic = 0.5 * L**2 * omega**2
+    potential = g * L * (1 - np.cos(theta))
+    return kinetic + potential
+
+b = 0.2
+sol = solve_ivp(forced_damped_pendulum, t_span, y0, t_eval=t_eval, 
+                args=(b, g, L, A, omega))
+energies = [system_energy(theta, omega, L, g) 
+           for theta, omega in zip(sol.y[0], sol.y[1])]
+
+plt.subplot(2, 2, 4)
+plt.plot(sol.t, energies)
+plt.xlabel('Time (s)')
+plt.ylabel('Total Energy (J)')
+plt.title('System Energy Evolution')
+plt.grid(True)
+
+plt.tight_layout()
+plt.show()
+
+# 3D Phase Space Trajectory
+fig = plt.figure(figsize=(10, 8))
+ax = fig.add_subplot(111, projection='3d')
+
+b = 0.2
+sol = solve_ivp(forced_damped_pendulum, t_span, y0, t_eval=t_eval, 
+                args=(b, g, L, A, omega))
+
+ax.plot(sol.y[0], sol.y[1], sol.t)
+ax.set_xlabel('θ (rad)')
+ax.set_ylabel('dθ/dt (rad/s)')
+ax.set_zlabel('Time (s)')
+ax.set_title('3D Phase Space Trajectory')
+plt.show()
+
+# Poincaré Section
+plt.figure(figsize=(8, 8))
+t_long = np.linspace(0, 200, 4000)
+sol = solve_ivp(forced_damped_pendulum, (0, 200), y0, t_eval=t_long, 
+                args=(b, g, L, A, omega))
+
+# Sample points at driving period
+period = 2*np.pi/omega
+indices = [i for i in range(len(t_long)) 
+          if abs((t_long[i] % period)) < 0.1]
+
+plt.scatter(sol.y[0][indices], sol.y[1][indices], s=1)
+plt.xlabel('θ (rad)')
+plt.ylabel('dθ/dt (rad/s)')
+plt.title('Poincaré Section')
+plt.grid(True)
 plt.show()
 ```
 
 This script numerically solves the pendulum equation and plots \( \theta(t) \) over time.
 
-![Forced Damped Pendulum Motion](assets/problem2.png)
+![Effect of Damping Coefficient](assets/prob2_a1.png)
+
+![3D Phase Space Trajectory](assets/prob2_a2.png)
+
+![Poincaré Section](assets/prob2_a3.png)
 
 ---
 
