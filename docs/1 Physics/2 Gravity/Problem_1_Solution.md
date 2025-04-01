@@ -1,6 +1,4 @@
-# Problem 1
-
-Orbital Period and Orbital Radius
+# Problem 1: Orbital Period and Orbital Radius
 
 ## 1. Theoretical Foundation
 
@@ -127,14 +125,6 @@ plt.tight_layout()
 plt.show()
 ```
 
-![Kepler's Third Law Verification](assets/prob1_a1.png)
-
-![3D Orbital Visualization](assets/prob1_a2.png)
-
-![Orbital Velocity vs Radius](assets/prob1_a3.png)
-
-![Orbital Energy Analysis](assets/prob1_a4.png)
-
 ## 3. Real-World Applications
 
 ### 3.1 Satellite Orbits
@@ -184,8 +174,6 @@ def plot_satellite_orbits():
 
 plot_satellite_orbits()
 ```
-
-![Satellite Orbits](assets/prob1_a5.png)
 
 ### 3.2 Solar System Analysis
 
